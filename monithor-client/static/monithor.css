@@ -1,0 +1,12 @@
+h1 {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.container {
+    padding: 80px 0px 0px 40px;
+}
+
+.fluid-container{
+    padding: 80px 0px 0px 40px;
+}
