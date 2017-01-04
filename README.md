@@ -1,5 +1,5 @@
 # Monithor
-Monithor is a basic HTTP health checking tool, built as a learning project using Vue.js and Spring Boot. 
+Monithor is a basic HTTP health checking tool, built as a learning project using [Vue.js](https://vuejs.org/) and [Spring Boot](https://projects.spring.io/spring-boot/). 
 
 Monithor will periodically make a HTTP request to fetch the configured URL and do a pattern match to validate the response. Besides that, it will try to extract version information from the response.
 
