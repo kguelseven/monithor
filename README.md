@@ -5,15 +5,18 @@ Monithor will periodically make a HTTP request to fetch the configured URL and d
 
  A couple of screenshots are worth a thousand words.
  
- Defining a job
+ 
+ **Defining a job**
  
  ![Alt text](monithor-client/docs/addjob.png?raw=true "Add")
  
- Searching
+ 
+ **Searching**
  
  ![Alt text](monithor-client/docs/search.png?raw=true "Search")
  
- Monitoring
+ 
+ **Monitoring**
  
  ![Alt text](monithor-client/docs/monitor.png?raw=true "Monitor")
 
