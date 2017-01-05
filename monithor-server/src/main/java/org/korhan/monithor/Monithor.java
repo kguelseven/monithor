@@ -21,33 +21,32 @@ import java.util.concurrent.Executor;
 @Log4j
 public class Monithor {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Monithor.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(Monithor.class, args);
+  }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedMethods("GET", "POST", "OPTIONS", "DELETE");
-            }
-        };
-    }
+  @Bean
+  public WebMvcConfigurer corsConfigurer() {
+    return new WebMvcConfigurerAdapter() {
+      @Override
+      public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**").allowedMethods("GET", "POST", "OPTIONS", "DELETE");
+      }
+    };
+  }
 
-    @Bean
-    public HttpClient httpClient() {
-        return HttpClientBuilder.create().build();
-    }
+  @Bean
+  public HttpClient httpClient() {
+    return HttpClientBuilder.create().build();
+  }
 
-    @Bean
-    public Executor getAsyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("checkJob-");
-        executor.initialize();
-        return executor;
-    }
+  @Bean
+  public Executor executor() {
+    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    executor.setCorePoolSize(10);
+    executor.setMaxPoolSize(10);
+    executor.setQueueCapacity(100);
+    executor.initialize();
+    return executor;
+  }
 }

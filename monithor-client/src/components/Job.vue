@@ -38,6 +38,12 @@
       </div>
       <hr>
       <div class="form-group">
+        <label class="control-label col-sm-2"></label>
+        <div class="col-sm-10">
+          <strong>Optional</strong>
+        </div>
+      </div>
+      <div class="form-group">
         <label class="control-label col-sm-2" for="formJobExtract">Overwrite Version</label>
         <div class="form-inline col-sm-10">
           <input class="form-control" style="width: 100%" id="formJobExtract" name="jobExtract"
@@ -63,6 +69,19 @@
         </div>
       </div>
     </form>
+    <hr>
+    <div class="form-group">
+      <label class="control-label col-sm-2"></label>
+      <div class="col-sm-10">
+        <strong>Last result: {{lastTimestampFormatted}}</strong>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2"></label>
+      <div class="col-sm-10"></div>
+      <pre>{{jobPrettyPrinted}}</pre>
+    </div>
+
   </div>
 </template>
 
@@ -78,8 +97,16 @@
     data () {
       return {
         job: {},
+        jobPrettyPrinted: '',
         tags: '',
         message: ''
+      }
+    },
+    computed: {
+      lastTimestampFormatted () {
+        if (this.job.lastTimestamp) {
+          return new Date(this.job.lastTimestamp).toLocaleString()
+        }
       }
     },
     beforeRouteEnter (to, from, next) {
@@ -94,6 +121,7 @@
     methods: {
       initJob () {
         this.job = {intervalSecs: 300, successMatch: 'sbb access'}
+        this.jobPrettyPrinted = ''
         this.tags = ''
         this.message = ''
       },
@@ -113,6 +141,7 @@
       loadJob (id) {
         this.$http.get('/jobs/' + id).then((response) => {
           this.job = response.body
+          this.jobPrettyPrinted = JSON.stringify(this.job, null, 2)
           if (this.job.tags) {
             this.tags = this.job.tags.join(',')
           }

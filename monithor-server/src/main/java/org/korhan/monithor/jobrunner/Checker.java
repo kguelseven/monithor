@@ -5,6 +5,6 @@ import org.korhan.monithor.data.model.JobResult;
 
 public interface Checker {
 
-    public JobResult check(Job job);
+  public JobResult check(Job job);
 
 }

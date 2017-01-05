@@ -13,13 +13,13 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonDeserialize(builder = TagResult.TagResultBuilder.class)
 public class TagResult {
-    private String tag;
-    private boolean success;
-    private Long lastTimestamp;
-    private List<Job> jobsSuccess;
-    private List<Job> jobsFailure;
+  private String tag;
+  private boolean success;
+  private Long lastTimestamp;
+  private List<Job> jobsSuccess;
+  private List<Job> jobsFailure;
 
-    @JsonPOJOBuilder(withPrefix = "")
-    public static final class TagResultBuilder {
-    }
+  @JsonPOJOBuilder(withPrefix = "")
+  public static final class TagResultBuilder {
+  }
 }
