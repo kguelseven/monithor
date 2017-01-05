@@ -46,7 +46,7 @@ public class JobRunner {
     for (Job job : jobs) {
       repo.save(job);
     }
-    log.debug("All jobs updated");
+    log.debug("Total jobs updated " + jobs.size());
   }
 
   private void startJobs(List<Job> jobs) {
