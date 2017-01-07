@@ -98,7 +98,8 @@
               <workingDirectory>../monithor-client/</workingDirectory>
               <executable>npm</executable>
               <arguments>
-                <argument>run build</argument>
+                <argument>run</argument>
+                <argument>build</argument>
               </arguments>
               <!-- windows only
               <executable>cmd</executable>
