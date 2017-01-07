@@ -96,12 +96,17 @@
             </goals>
             <configuration>
               <workingDirectory>../monithor-client/</workingDirectory>
-              <!-- windows only -->
+              <executable>npm</executable>
+              <arguments>
+                <argument>run build</argument>
+              </arguments>
+              <!-- windows only
               <executable>cmd</executable>
               <arguments>
                 <argument>/c</argument>
                 <argument>npm run build</argument>
               </arguments>
+              -->
             </configuration>
           </execution>
         </executions>
