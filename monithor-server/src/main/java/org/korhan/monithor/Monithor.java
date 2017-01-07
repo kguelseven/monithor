@@ -2,7 +2,8 @@ package org.korhan.monithor;
 
 import lombok.extern.log4j.Log4j;
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,8 @@ import java.util.concurrent.Executor;
 @Log4j
 public class Monithor {
 
+  public static final int CONNECTION_TIMEOUT = 30000;
+
   public static void main(String[] args) {
     SpringApplication.run(Monithor.class, args);
   }
@@ -37,15 +40,20 @@ public class Monithor {
 
   @Bean
   public HttpClient httpClient() {
-    return HttpClientBuilder.create().build();
+    RequestConfig requestConfig = RequestConfig.custom()
+      .setSocketTimeout(CONNECTION_TIMEOUT)
+      .setConnectTimeout(CONNECTION_TIMEOUT)
+      .setConnectionRequestTimeout(CONNECTION_TIMEOUT)
+      .build();
+    return HttpClients.custom()
+      .setDefaultRequestConfig(requestConfig)
+      .build();
   }
 
   @Bean
   public Executor executor() {
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(10);
-    executor.setMaxPoolSize(10);
-    executor.setQueueCapacity(100);
     executor.initialize();
     return executor;
   }

@@ -33,6 +33,7 @@ public class Job {
   @NotNull
   private String successMatch;
   private String versionMatch;
+  private String buildTimestampMatch;
   @NotNull
   private Integer intervalSecs;
   @ElementCollection(fetch = FetchType.EAGER)
@@ -43,6 +44,7 @@ public class Job {
   private Boolean lastResult = false;
   private String lastMessage = "";
   private String lastVersion = "";
+  private String lastBuildTimestamp = "";
   private Long lastDuration = 0l;
 
   public boolean isDue() {

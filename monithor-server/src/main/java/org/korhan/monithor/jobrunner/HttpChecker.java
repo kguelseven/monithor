@@ -18,9 +18,9 @@ import java.util.regex.Pattern;
 public class HttpChecker implements Checker {
 
   private final HttpClient client;
-  private final VersionExtractor extractor;
+  private final DataExtractor extractor;
 
-  public HttpChecker(HttpClient client, VersionExtractor extractor) {
+  public HttpChecker(HttpClient client, DataExtractor extractor) {
     this.client = client;
     this.extractor = extractor;
   }
@@ -33,7 +33,8 @@ public class HttpChecker implements Checker {
       HttpResponse response = httpCall(job);
       String text = readText(response);
       builder.success(match(job.getSuccessMatch(), text))
-        .version(extractor.extract(job.getVersionMatch(), text));
+        .version(extractor.extractVersion(job.getVersionMatch(), text))
+        .buildTimestamp(extractor.extractBuildTimestamp(job.getBuildTimestampMatch(), text));
     } catch (Exception ex) {
       log.error("Error running check", ex);
       builder.success(false).error(getError(ex));

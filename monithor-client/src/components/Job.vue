@@ -44,25 +44,32 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="control-label col-sm-2" for="formJobExtract">Overwrite Version</label>
-        <div class="form-inline col-sm-10">
-          <input class="form-control" style="width: 100%" id="formJobExtract" name="jobExtract"
-                 placeholder="Version:(.*?)" v-model="job.extractMatch">
-        </div>
-      </div>
-      <div class="form-group">
         <label class="control-label  col-sm-2" for="formJobTags">Tags</label>
         <div class="col-sm-10">
           <input class="form-control" placeholder="A,B,C.." id="formJobTags" v-model="tags">
         </div>
       </div>
       <div class="form-group">
+        <label class="control-label col-sm-2" for="formJobVersionMatch">Overwrite Version</label>
+        <div class="form-inline col-sm-10">
+          <input class="form-control" style="width: 100%" id="formJobVersionMatch" name="jobVersionMatch"
+                 placeholder=".*?(\d+\.\d+\.\d+(-SNAPSHOT)?).*" v-model="job.versionMatch">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="formJobBuildTimestampMatch">Overwrite Build Timestamp</label>
+        <div class="form-inline col-sm-10">
+          <input class="form-control" style="width: 100%" id="formJobBuildTimestampMatch" name="jobBuildTimestampMatch"
+                 placeholder=".*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*" v-model="job.buildTimestampMatch">
+        </div>
+      </div>
+      <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button class="btn btn-primary" v-on:click="cancelJob($event)">
+          <button class="btn btn-primary" @click.prevent="cancelJob()">
             <span v-if="this.$route.params.id">Go Back</span>
             <span v-else>Reset</span>
           </button>
-          <button class="btn btn-primary" v-bind:disabled="formFields.failed()" v-on:click="saveJob($event)">
+          <button class="btn btn-primary" :disabled="formFields.failed()" @click.prevent="saveJob()">
             <span v-if="this.$route.params.id">Update</span>
             <span v-else>Add</span>
           </button>
@@ -125,8 +132,7 @@
         this.tags = ''
         this.message = ''
       },
-      saveJob (event) {
-        event.preventDefault()
+      saveJob () {
         if (this.$validator.validateAll()) {
           if (this.tags) {
             this.job.tags = this.tags.replace(' ', '').split(',')
@@ -149,11 +155,11 @@
           this.bus.$emit('error', response.statusText, response.status)
         })
       },
-      cancelJob (event) {
-        event.preventDefault()
-        this.initJob()
+      cancelJob () {
         if (this.$route.params.id) {
           this.$router.go(-1)
+        } else {
+          this.initJob()
         }
       }
     }

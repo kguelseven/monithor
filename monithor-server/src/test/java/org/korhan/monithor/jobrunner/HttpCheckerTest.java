@@ -26,7 +26,7 @@ public class HttpCheckerTest {
 
   @Mock
   private HttpClient client;
-  private VersionExtractor extractor = new VersionExtractor();
+  private DataExtractor extractor = new DataExtractor();
   private Job job;
 
   private HttpChecker testee;

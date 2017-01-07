@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Log4j
@@ -35,24 +35,25 @@ public class JobRunner {
 
   @Scheduled(fixedDelayString = "${jobrunner.delay}")
   public void run() throws Exception {
+    long startMillis = System.currentTimeMillis();
     List<Job> jobs = loadDueJobs();
+    logJobsLoaded(jobs);
     startJobs(jobs);
     Set<Job> jobsChecked = waitForResults(jobs.size());
     setNotCheckedResult(jobs, jobsChecked);
     updateJobs(jobs);
+    logJobsFinished(jobs, startMillis);
   }
 
   private void updateJobs(List<Job> jobs) {
     for (Job job : jobs) {
       repo.save(job);
     }
-    log.debug("Total jobs updated " + jobs.size());
   }
 
   private void startJobs(List<Job> jobs) {
     for (Job job : jobs) {
       completionService.submit(new JobTask(checker, job));
-      log.debug("Job started " + job);
     }
   }
 
@@ -61,7 +62,6 @@ public class JobRunner {
       .stream()
       .filter(j -> j.isDue())
       .collect(Collectors.toList());
-    log.debug("Total due jobs " + jobs.size());
     return jobs;
   }
 
@@ -69,14 +69,12 @@ public class JobRunner {
     Set<Job> results = new HashSet<>();
     for (int i = 0; i < jobsCount; i++) {
       try {
-        Future<Job> future = completionService.poll(30, TimeUnit.SECONDS);
-        if (future != null) {
-          results.add(future.get());
-        } else {
-          log.error("Job timed out");
-        }
+        Future<Job> future = completionService.take();
+        results.add(future.get());
+      } catch (ExecutionException ee) {
+        log.error("ExecutionException executing task", ee.getCause());
       } catch (Exception ex) {
-        log.error("Error polling task", ex);
+        log.error("Error executing task", ex);
       }
     }
     return results;
@@ -91,7 +89,21 @@ public class JobRunner {
       job.setLastMessage("timeout?");
       job.setLastDuration(null);
       job.setLastVersion(null);
+      job.setLastBuildTimestamp(null);
     }
+  }
+
+  private void logJobsFinished(List<Job> jobs, long startMillis) {
+    if (!jobs.isEmpty()) {
+      log.debug(jobs.size() + " jobs run in " + (System.currentTimeMillis() - startMillis) + "ms");
+    }
+  }
+
+  private void logJobsLoaded(List<Job> jobs) {
+    if (!jobs.isEmpty()) {
+      log.debug("Total jobs loaded " + jobs.size());
+    }
+
   }
 
 
@@ -113,6 +125,7 @@ public class JobRunner {
       job.setLastMessage(result.getError());
       job.setLastDuration(result.getDuration());
       job.setLastVersion(result.getVersion());
+      job.setLastBuildTimestamp(result.getBuildTimestamp());
       return job;
     }
   }

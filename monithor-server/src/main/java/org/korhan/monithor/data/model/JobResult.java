@@ -14,5 +14,6 @@ public class JobResult {
   private boolean success;
   private long duration;
   private String version;
+  private String buildTimestamp;
   private String error;
 }
