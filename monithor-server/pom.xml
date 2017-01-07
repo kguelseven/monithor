@@ -89,19 +89,39 @@
         <version>1.5.0</version>
         <executions>
           <execution>
-            <id>npm build</id>
+            <id>npm-install</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>exec</goal>
             </goals>
             <configuration>
               <workingDirectory>../monithor-client/</workingDirectory>
-              <!-- windows only -->
+              <executable>npm</executable>
+              <arguments>
+                <argument>install</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm-run-build</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <workingDirectory>../monithor-client/</workingDirectory>
+              <executable>npm</executable>
+              <arguments>
+                <argument>run</argument>
+                <argument>build</argument>
+              </arguments>
+              <!-- windows only
               <executable>cmd</executable>
               <arguments>
                 <argument>/c</argument>
                 <argument>npm run build</argument>
               </arguments>
+              -->
             </configuration>
           </execution>
         </executions>
