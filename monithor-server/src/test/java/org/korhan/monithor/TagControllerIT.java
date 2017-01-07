@@ -20,44 +20,44 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = IntegrationTestConfig.class)
 public class TagControllerIT {
 
-    private Job job1, job2, job3;
+  private Job job1, job2, job3;
 
-    @Autowired
-    private IntegrationTestUtils restUtils;
+  @Autowired
+  private IntegrationTestUtils restUtils;
 
-    @Autowired
-    private JobRepository repo;
+  @Autowired
+  private JobRepository repo;
 
-    @Before
-    public void setup() {
-        job1 = restUtils.createJobWithTags("foo1", true, new String[]{"tag1", "tag2", "tag3"});
-        job2 = restUtils.createJobWithTags("foo2", false, new String[]{"tag1", "tag20"});
-        job3 = restUtils.createJobWithTags("foo3", true, new String[]{"tag40", "tag2"});
-    }
+  @Before
+  public void setup() {
+    job1 = restUtils.createJobWithTags("foo1", true, new String[]{"tag1", "tag2", "tag3"});
+    job2 = restUtils.createJobWithTags("foo2", false, new String[]{"tag1", "tag20"});
+    job3 = restUtils.createJobWithTags("foo3", true, new String[]{"tag40", "tag2"});
+  }
 
-    @After
-    public void tearDown() {
-        repo.deleteAll();
-    }
+  @After
+  public void tearDown() {
+    repo.deleteAll();
+  }
 
-    @Test
-    public void testGetTags() {
-        assertThat(restUtils.getTags()).isEqualTo(Arrays.asList("TAG1", "TAG2", "TAG20", "TAG3", "TAG40"));
-    }
+  @Test
+  public void testGetTags() {
+    assertThat(restUtils.getTags()).isEqualTo(Arrays.asList("TAG1", "TAG2", "TAG20", "TAG3", "TAG40"));
+  }
 
-    @Test
-    public void testGetStatusSuccess() {
-        TagResult statusTag2 = restUtils.getTagStatus("TAG2");
-        assertThat(statusTag2.isSuccess()).isTrue();
-        Assertions.assertThat(statusTag2.getJobsFailure()).isEmpty();
-        Assertions.assertThat(statusTag2.getJobsSuccess()).isEqualTo(Arrays.asList(job1, job3));
-    }
+  @Test
+  public void testGetStatusSuccess() {
+    TagResult statusTag2 = restUtils.getTagStatus("TAG2");
+    assertThat(statusTag2.isSuccess()).isTrue();
+    Assertions.assertThat(statusTag2.getJobsFailure()).isEmpty();
+    Assertions.assertThat(statusTag2.getJobsSuccess()).isEqualTo(Arrays.asList(job1, job3));
+  }
 
-    @Test
-    public void testGetStatusFailure() {
-        TagResult statusTag1 = restUtils.getTagStatus("TAG1");
-        assertThat(statusTag1.isSuccess()).isFalse();
-        Assertions.assertThat(statusTag1.getJobsFailure()).isEqualTo(Arrays.asList(job2));
-        Assertions.assertThat(statusTag1.getJobsSuccess()).isEqualTo(Arrays.asList(job1));
-    }
+  @Test
+  public void testGetStatusFailure() {
+    TagResult statusTag1 = restUtils.getTagStatus("TAG1");
+    assertThat(statusTag1.isSuccess()).isFalse();
+    Assertions.assertThat(statusTag1.getJobsFailure()).isEqualTo(Arrays.asList(job2));
+    Assertions.assertThat(statusTag1.getJobsSuccess()).isEqualTo(Arrays.asList(job1));
+  }
 }

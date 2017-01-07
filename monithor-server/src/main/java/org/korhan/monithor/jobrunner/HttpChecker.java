@@ -17,55 +17,56 @@ import java.util.regex.Pattern;
 @Component
 public class HttpChecker implements Checker {
 
-    private final HttpClient client;
-    private final VersionExtractor extractor;
+  private final HttpClient client;
+  private final DataExtractor extractor;
 
-    public HttpChecker(HttpClient client, VersionExtractor extractor) {
-        this.client = client;
-        this.extractor = extractor;
-    }
+  public HttpChecker(HttpClient client, DataExtractor extractor) {
+    this.client = client;
+    this.extractor = extractor;
+  }
 
-    @Override
-    public JobResult check(Job job) {
-        long startMs = System.currentTimeMillis();
-        JobResult.JobResultBuilder builder = JobResult.builder().job(job);
-        try {
-            HttpResponse response = httpCall(job);
-            String text = readText(response);
-            builder.success(match(job.getSuccessMatch(), text))
-                    .version(extractor.extract(job.getVersionMatch(), text));
-        } catch (Exception ex) {
-            log.error("Error running check", ex);
-            builder.success(false).error(getError(ex));
-        }
-        return builder.duration(System.currentTimeMillis() - startMs).build();
+  @Override
+  public JobResult check(Job job) {
+    long startMs = System.currentTimeMillis();
+    JobResult.JobResultBuilder builder = JobResult.builder().job(job);
+    try {
+      HttpResponse response = httpCall(job);
+      String text = readText(response);
+      builder.success(match(job.getSuccessMatch(), text))
+        .version(extractor.extractVersion(job.getVersionMatch(), text))
+        .buildTimestamp(extractor.extractBuildTimestamp(job.getBuildTimestampMatch(), text));
+    } catch (Exception ex) {
+      log.error("Error running check", ex);
+      builder.success(false).error(getError(ex));
     }
+    return builder.duration(System.currentTimeMillis() - startMs).build();
+  }
 
-    private boolean match(String successMatch, String text) {
-        return Pattern.matches(".*" + successMatch + ".*", text);
-    }
+  private boolean match(String successMatch, String text) {
+    return Pattern.matches(".*" + successMatch + ".*", text);
+  }
 
-    private String readText(HttpResponse response) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-            }
-        }
-        return builder.toString();
+  private String readText(HttpResponse response) throws IOException {
+    StringBuilder builder = new StringBuilder();
+    try (BufferedReader reader = new BufferedReader(
+      new InputStreamReader(response.getEntity().getContent()))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        builder.append(line);
+      }
     }
+    return builder.toString();
+  }
 
-    private HttpResponse httpCall(Job job) throws IOException {
-        return client.execute(new HttpGet(job.getUrl()));
-    }
+  private HttpResponse httpCall(Job job) throws IOException {
+    return client.execute(new HttpGet(job.getUrl()));
+  }
 
-    private String getError(Exception ex) {
-        String error = ex.getMessage();
-        if (error == null) {
-            error = ex.getClass().getSimpleName();
-        }
-        return error;
+  private String getError(Exception ex) {
+    String error = ex.getClass().getSimpleName();
+    if (ex.getMessage() != null) {
+      error += ": " + ex.getMessage();
     }
+    return error;
+  }
 }

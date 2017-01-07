@@ -19,49 +19,49 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = IntegrationTestConfig.class)
 public class JobControllerCrudIT {
 
-    @Autowired
-    private IntegrationTestUtils restUtils;
+  @Autowired
+  private IntegrationTestUtils restUtils;
 
-    @Autowired
-    private JobRepository repo;
+  @Autowired
+  private JobRepository repo;
 
-    @Before
-    public void setup() {
+  @Before
+  public void setup() {
+  }
+
+  @After
+  public void tearDown() {
+    repo.deleteAll();
+  }
+
+  @Test
+  public void testCreate() throws Exception {
+    List<Job> jobs = restUtils.createJobs("job1", "job2", "job3");
+    assertEquals(3, jobs.size());
+    for (Job job : jobs) {
+      assertEquals(job, restUtils.load(job.getId()));
     }
+  }
 
-    @After
-    public void tearDown() {
-        repo.deleteAll();
+  @Test
+  public void testUpdate() throws Exception {
+    List<Job> jobs = restUtils.createJobs("job1", "job2", "job3");
+    for (Job job : jobs) {
+      job.setName(job.getName() + "_1");
+      restUtils.update(job);
     }
+    for (Job job : jobs) {
+      assertEquals(job.getName(), restUtils.load(job.getId()).getName());
+    }
+  }
 
-    @Test
-    public void testCreate() throws Exception {
-        List<Job> jobs = restUtils.createJobs("job1", "job2", "job3");
-        assertEquals(3, jobs.size());
-        for (Job job : jobs) {
-            assertEquals(job, restUtils.load(job.getId()));
-        }
+  @Test
+  public void testDelete() {
+    List<Job> jobs = restUtils.createJobs("job1", "job2", "job3");
+    jobs.forEach(restUtils::delete);
+    for (Job job : jobs) {
+      assertNull(restUtils.load(job.getId()));
     }
-
-    @Test
-    public void testUpdate() throws Exception {
-        List<Job> jobs = restUtils.createJobs("job1", "job2", "job3");
-        for (Job job : jobs) {
-            job.setName(job.getName() + "_1");
-            restUtils.update(job);
-        }
-        for (Job job : jobs) {
-            assertEquals(job.getName(), restUtils.load(job.getId()).getName());
-        }
-    }
-
-    @Test
-    public void testDelete() {
-        List<Job> jobs = restUtils.createJobs("job1", "job2", "job3");
-        jobs.forEach(restUtils::delete);
-        for (Job job : jobs) {
-            assertNull(restUtils.load(job.getId()));
-        }
-    }
+  }
 
 }

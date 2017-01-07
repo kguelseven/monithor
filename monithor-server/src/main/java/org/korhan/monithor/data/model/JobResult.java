@@ -10,9 +10,10 @@ import lombok.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonDeserialize(builder = JobResult.JobResultBuilder.class)
 public class JobResult {
-    private Job job;
-    private boolean success;
-    private long duration;
-    private String version;
-    private String error;
+  private Job job;
+  private boolean success;
+  private long duration;
+  private String version;
+  private String buildTimestamp;
+  private String error;
 }

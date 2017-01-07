@@ -67,8 +67,10 @@
           'name',
           {name: 'url', title: 'URL', callback: 'url'},
           {name: 'tags', title: 'Tags', callback: 'tags'},
+          {name: 'intervalSecs', title: 'Interval secs'},
           {name: 'lastVersion', title: 'Version'},
-          {name: 'lastDuration', title: 'Duration'},
+          {name: 'lastBuildTimestamp', title: 'Build Timestamp'},
+          {name: 'lastDuration', title: 'Duration ms'},
           {name: 'lastTimestamp', title: 'Last check', callback: 'ago'},
           '__component:row-actions'
         ],
