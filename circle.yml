@@ -1,2 +1,8 @@
 general:
   build_dir: monithor-server
+
+machine:
+  node:
+    version: 6.9.2
+  java:
+    version: oraclejdk8
