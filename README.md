@@ -1,6 +1,9 @@
 # Monithor
 Monithor is a basic HTTP health checking tool, built as a learning project using [Vue.js](https://vuejs.org/) and [Spring Boot](https://projects.spring.io/spring-boot/). 
 
+[![CircleCI](https://circleci.com/gh/kguelseven/monithor/tree/master.svg?style=svg&circle-
+token=7ed5934f015b6e5e2e87a2c6648e4d4276507d5e)](https://circleci.com/gh/kguelseven/monithor/tree/master)
+
 Monithor will periodically make a HTTP request to fetch the configured URL and do a pattern match to validate the response. Besides that, it will try to extract version information from the response.
 
  A couple of screenshots are worth a thousand words.
