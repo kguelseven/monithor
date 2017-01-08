@@ -18,6 +18,37 @@
     <java.version>1.8</java.version>
   </properties>
 
+  <profiles>
+    <profile>
+      <id>Windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <npm.exec>cmd</npm.exec>
+        <npm.install.arg>/c npm install</npm.install.arg>
+        <npm.build.arg1>/c npm run build</npm.build.arg1>
+        <npm.build.arg2></npm.build.arg2>
+      </properties>
+    </profile>
+    <profile>
+      <id>unix</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <properties>
+        <npm.exec>npm</npm.exec>
+        <npm.install.arg>install</npm.install.arg>
+        <npm.build.arg1>run</npm.build.arg1>
+        <npm.build.arg2>build</npm.build.arg2>
+      </properties>
+    </profile>
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -84,21 +115,33 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.18.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.5.0</version>
         <executions>
           <execution>
-            <id>npm-install</id>
+            <id>npm-run-install</id>
             <phase>prepare-package</phase>
             <goals>
               <goal>exec</goal>
             </goals>
             <configuration>
               <workingDirectory>../monithor-client/</workingDirectory>
-              <executable>npm</executable>
+              <executable>${npm.exec}</executable>
               <arguments>
-                <argument>install</argument>
+                <argument>${npm.install.arg}</argument>
               </arguments>
             </configuration>
           </execution>
@@ -110,18 +153,11 @@
             </goals>
             <configuration>
               <workingDirectory>../monithor-client/</workingDirectory>
-              <executable>npm</executable>
+              <executable>${npm.exec}</executable>
               <arguments>
-                <argument>run</argument>
-                <argument>build</argument>
+                <argument>${npm.build.arg1}</argument>
+                <argument>${npm.build.arg2}</argument>
               </arguments>
-              <!-- windows only
-              <executable>cmd</executable>
-              <arguments>
-                <argument>/c</argument>
-                <argument>npm run build</argument>
-              </arguments>
-              -->
             </configuration>
           </execution>
         </executions>
