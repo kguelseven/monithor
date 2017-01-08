@@ -29,7 +29,8 @@
       <properties>
         <npm.exec>cmd</npm.exec>
         <npm.install.arg>/c npm install</npm.install.arg>
-        <npm.build.arg>/c npm run build</npm.build.arg>
+        <npm.build.arg1>/c npm run build</npm.build.arg1>
+        <npm.build.arg2></npm.build.arg2>
       </properties>
     </profile>
     <profile>
@@ -42,7 +43,8 @@
       <properties>
         <npm.exec>npm</npm.exec>
         <npm.install.arg>install</npm.install.arg>
-        <npm.build.arg>run build</npm.build.arg>
+        <npm.build.arg1>run</npm.build.arg1>
+        <npm.build.arg2>build</npm.build.arg2>
       </properties>
     </profile>
   </profiles>
@@ -153,7 +155,8 @@
               <workingDirectory>../monithor-client/</workingDirectory>
               <executable>${npm.exec}</executable>
               <arguments>
-                <argument>${npm.build.arg}</argument>
+                <argument>${npm.build.arg1}</argument>
+                <argument>${npm.build.arg2}</argument>
               </arguments>
             </configuration>
           </execution>
