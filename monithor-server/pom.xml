@@ -23,7 +23,7 @@
       <id>Windows</id>
       <activation>
         <os>
-          <family>Windows</family>
+          <family>windows</family>
         </os>
       </activation>
       <properties>
