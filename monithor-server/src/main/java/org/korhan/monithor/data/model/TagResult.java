@@ -16,8 +16,7 @@ public class TagResult {
   private String tag;
   private boolean success;
   private Long lastTimestamp;
-  private List<Job> jobsSuccess;
-  private List<Job> jobsFailure;
+  private List<Job> jobs;
 
   @JsonPOJOBuilder(withPrefix = "")
   public static final class TagResultBuilder {

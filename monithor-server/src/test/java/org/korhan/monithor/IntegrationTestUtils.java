@@ -54,15 +54,6 @@ public class IntegrationTestUtils {
       }).getBody();
   }
 
-  List<Job> queryTagOrName(String sort, Integer page, Integer per_page, String queryString) {
-    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(jobsUrl)
-      .queryParam("queryString", queryString);
-    URI uri = builder.build().encode().toUri();
-    return restTemplate.exchange(uri, HttpMethod.GET, null,
-      new ParameterizedTypeReference<List<Job>>() {
-      }).getBody();
-  }
-
   List<Job> getByTag(String tag) {
     return restTemplate.exchange(jobsUrl + "tag/{tag}", HttpMethod.GET, null,
       new ParameterizedTypeReference<List<Job>>() {
