@@ -2,7 +2,7 @@
   <div id="monitor">
     <table class="status">
       <template v-for="tagResult in tagResults">
-        <tr class="status" :class="[{success: tagResult.success}, {failure: !tagResult.success}]"
+        <tr :class="[{success: tagResult.success}, {failure: !tagResult.success}]"
             valign="top">
           <td width="10%">
             <span class="label label-tag">{{tagResult.tag}}</span><br>
@@ -58,11 +58,11 @@
         this.tags.forEach((tag, index) => {
           this.$http.get('/tags/status/' + tag).then((response) => {
             this.$set(this.tagResults, index, response.data)
+            this.bus.$emit('message', 'Updated ' + new Date().toLocaleTimeString())
           }, (response) => {
             this.bus.$emit('error', response.statusText, response.status)
           })
         })
-        this.bus.$emit('message', 'Updated ' + new Date().toLocaleTimeString())
         if (this.doPolling) {
           setTimeout(() => this.loadStatus(), 10000)
         }

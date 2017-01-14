@@ -33,10 +33,14 @@ public class TagController {
   public TagResult getStatus(@PathVariable("tag") String tag) {
     List<Job> jobs = repo.findByTag(tag);
     Optional<Job> lastJob = jobs.stream().max(Comparator.comparing(j -> j.getLastTimestamp()));
+    long lastTimestamp = 0l;
+    if(lastJob.isPresent()) {
+      lastTimestamp = lastJob.get().getLastTimestamp();
+    }
     boolean successStatus = jobs.stream().allMatch(j -> j.getLastResult());
     return TagResult.builder()
       .jobs(jobs)
-      .lastTimestamp(lastJob.get().getLastTimestamp())
+      .lastTimestamp(lastTimestamp)
       .tag(tag)
       .success(successStatus)
       .build();

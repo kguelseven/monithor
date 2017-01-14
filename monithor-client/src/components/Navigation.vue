@@ -10,10 +10,10 @@
         </div>
       </form>
       <transition name="fade">
-        <span v-show="message" class="label label-default pull-right" style="font-size:13px;">{{message}}</span>
+        <span v-show="message" class="label label-default pull-right" style="font-size:14px;">{{message}}</span>
       </transition>
       <transition name="fade">
-        <span v-show="error" class="label label-danger pull-right" style="font-size:13px;">{{error}}</span>
+        <span v-show="error" class="label label-danger pull-right" style="font-size:14px;">{{error}}</span>
       </transition>
     </div>
   </nav>
@@ -42,9 +42,7 @@
         router.push({name: 'new_job'})
       },
       searchJob () {
-        router.push({name: 'jobs'})
-        // wtf?
-        setTimeout(() => { this.bus.$emit('query', this.query) }, 100)
+        router.push({name: 'jobs', query: {query: this.query}})
       },
       monitor () {
         router.push({name: 'monitor'})

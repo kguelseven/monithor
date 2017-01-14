@@ -85,6 +85,7 @@
     },
     methods: {
       reload () {
+        this.queryParams.queryString = this.$route.query.query
         this.$refs.vuetable.reload()
       },
       status (status) {
@@ -111,12 +112,11 @@
         this.bus.$emit('error', response.statusText, response.status)
       }
     },
+    watch: {
+      '$route': 'reload'
+    },
     mounted () {
-      this.bus.$off('query')
-      this.bus.$on('query', function (query) {
-        this.queryParams.queryString = query
-        this.$refs.vuetable.reload()
-      }.bind(this))
+      this.reload()
     }
   }
 
