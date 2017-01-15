@@ -9,7 +9,8 @@
           </td>
           <td>
             <template v-for="job in tagResult.jobs">
-              <a :href="job.url" target="_blank"><span class="jobStatus" :class="[{success: job.lastResult}, {failure: !job.lastResult}]">
+              <a :href="job.url" target="_blank">
+                <span class="jobStatus" :class="[{success: job.lastResult}, {failure: !job.lastResult}]">
                   <router-link :to="{ name: 'edit_job', params: { id: job.id }}">{{job.name}}<br>{{version(job)}}</router-link>
                   <br>{{ago(job.lastTimestamp)}}</span></a>
             </template>
@@ -102,6 +103,7 @@
     border: 2px solid white;
     float:left;
     font-size:12px;
+    border-radius: 6px;
   }
   .jobStatus:hover {
     border: 2px solid #424949;

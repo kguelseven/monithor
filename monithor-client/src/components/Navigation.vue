@@ -3,17 +3,19 @@
     <div>
       <form class="navbar-form navbar-left">
         <div class="form-group">
-          <button type="button" class="btn btn-default btn-ml" @click="monitor()" title="Monitor" ><span class="glyphicon glyphicon-eye-open"></span></button>
-          <button type="button" class="btn btn-default btn-ml" @click="newJob()" title="Add a new Job" ><span class="glyphicon glyphicon-plus"></span></button>
+          <button type="button" class="btn btn-default btn-ml" @click="monitor()" title="Monitor"><span
+                  class="glyphicon glyphicon-eye-open"></span></button>
+          <button type="button" class="btn btn-default btn-ml" @click="newJob()" title="Add a new Job"><span
+                  class="glyphicon glyphicon-plus"></span></button>
           <input type="text" class="form-control" placeholder="Name or Tag" v-model="query" ref="search">
           <button type="submit" class="btn btn-default" @click="searchJob()">Search</button>
         </div>
       </form>
       <transition name="fade">
-        <span v-show="message" class="label label-default pull-right" style="font-size:14px;">{{message}}</span>
+        <span v-if="message" class="label label-default pull-right" style="font-size:14px;">{{message}}</span>
       </transition>
       <transition name="fade">
-        <span v-show="error" class="label label-danger pull-right" style="font-size:14px;">{{error}}</span>
+        <span v-if="error" class="label label-danger pull-right" style="font-size:14px;">{{error}}</span>
       </transition>
     </div>
   </nav>
@@ -63,10 +65,11 @@
       })
     }
   }
-</script>
 
+</script>
 <style scoped>
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity .5s
 }
 .fade-enter, .fade-leave-active {
