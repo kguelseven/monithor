@@ -34,6 +34,7 @@ public class Job {
   private String successMatch;
   private String versionMatch;
   private String buildTimestampMatch;
+  private boolean checkDeployment;
   @NotNull
   private Integer intervalSecs;
   @ElementCollection(fetch = FetchType.EAGER)

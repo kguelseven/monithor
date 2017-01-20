@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j
 @RestController
@@ -30,24 +31,18 @@ public class TagController {
 
   @RequestMapping(value = "/status/{tag}", method = RequestMethod.GET)
   public TagResult getStatus(@PathVariable("tag") String tag) {
-    List<Job> jobs = repo.findByTagOrderByLastTimestampDesc(tag);
-    List<Job> success = new ArrayList<>();
-    List<Job> failure = new ArrayList<>();
-    Long timestamp = 0l;
-    for (Job job : jobs) {
-      if (job.getLastResult()) {
-        success.add(job);
-      } else {
-        failure.add(job);
-      }
-      timestamp = Math.max(timestamp, job.getLastTimestamp());
+    List<Job> jobs = repo.findByTag(tag);
+    Optional<Job> lastJob = jobs.stream().max(Comparator.comparing(j -> j.getLastTimestamp()));
+    long lastTimestamp = 0l;
+    if(lastJob.isPresent()) {
+      lastTimestamp = lastJob.get().getLastTimestamp();
     }
+    boolean successStatus = jobs.stream().allMatch(j -> j.getLastResult());
     return TagResult.builder()
-      .jobsFailure(failure)
-      .jobsSuccess(success)
-      .lastTimestamp(timestamp)
+      .jobs(jobs)
+      .lastTimestamp(lastTimestamp)
       .tag(tag)
-      .success(failure.isEmpty())
+      .success(successStatus)
       .build();
   }
 }

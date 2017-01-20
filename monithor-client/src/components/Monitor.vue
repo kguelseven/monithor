@@ -2,26 +2,18 @@
   <div id="monitor">
     <table class="status">
       <template v-for="tagResult in tagResults">
-        <tr class="status" :class="[{success: tagResult.success}, {failure: !tagResult.success}]"
+        <tr :class="[{success: tagResult.success}, {failure: !tagResult.success}]"
             valign="top">
           <td width="10%">
             <span class="label label-tag">{{tagResult.tag}}</span><br>
           </td>
           <td>
-            <div v-if="notEmpty(tagResult.jobsFailure)">
-              <template v-for="job in tagResult.jobsFailure">
-                <a :href="job.url" target="_blank"><span class="jobStatus failure">
+            <template v-for="job in tagResult.jobs">
+              <a :href="job.url" target="_blank">
+                <span class="jobStatus" :class="[{success: job.lastResult}, {failure: !job.lastResult}]">
                   <router-link :to="{ name: 'edit_job', params: { id: job.id }}">{{job.name}}<br>{{version(job)}}</router-link>
                   <br>{{ago(job.lastTimestamp)}}</span></a>
-              </template>
-            </div>
-            <div v-if="notEmpty(tagResult.jobsSuccess)">
-              <template v-for="job in tagResult.jobsSuccess">
-                <a :href="job.url" target="_blank"><span class="jobStatus success">
-                <router-link :to="{ name: 'edit_job', params: { id: job.id }}">{{job.name}}<br>{{version(job)}}</router-link>
-                <br>{{ago(job.lastTimestamp)}}</span></a>
-              </template>
-            </div>
+            </template>
           </td>
         </tr>
       </template>
@@ -67,11 +59,11 @@
         this.tags.forEach((tag, index) => {
           this.$http.get('/tags/status/' + tag).then((response) => {
             this.$set(this.tagResults, index, response.data)
+            this.bus.$emit('message', 'Updated ' + new Date().toLocaleTimeString())
           }, (response) => {
             this.bus.$emit('error', response.statusText, response.status)
           })
         })
-        this.bus.$emit('message', 'Updated ' + new Date().toLocaleTimeString())
         if (this.doPolling) {
           setTimeout(() => this.loadStatus(), 10000)
         }
@@ -111,6 +103,7 @@
     border: 2px solid white;
     float:left;
     font-size:12px;
+    border-radius: 6px;
   }
   .jobStatus:hover {
     border: 2px solid #424949;

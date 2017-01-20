@@ -2,9 +2,8 @@
   <div class="fluid-container">
     <vuetable ref="vuetable"
               :fields="columns"
-              :append-params="queryParams"
-              :sort-order="sortOrder"
               api-url="/jobs/"
+              :append-params="queryParam"
               data-path=""
               pagination-path=""
               @vuetable:load-error="error"
@@ -74,17 +73,14 @@
           {name: 'lastTimestamp', title: 'Last check', callback: 'ago'},
           '__component:row-actions'
         ],
-        queryParams: {
+        queryParam: {
           queryString: ''
-        },
-        sortOrder: [{
-          field: 'lastTimestamp',
-          direction: 'desc'
-        }]
+        }
       }
     },
     methods: {
       reload () {
+        this.queryParam.queryString = this.$route.query.query
         this.$refs.vuetable.reload()
       },
       status (status) {
@@ -111,16 +107,17 @@
         this.bus.$emit('error', response.statusText, response.status)
       }
     },
-    mounted () {
-      this.bus.$off('query')
-      this.bus.$on('query', function (query) {
-        this.queryParams.queryString = query
-        this.$refs.vuetable.reload()
-      }.bind(this))
+    watch: {
+      '$route': 'reload'
+    },
+    beforeRouteEnter  (to, from, next) {
+      // :-/
+      next(vm => {
+        setTimeout(() => { vm.reload() }, 10)
+      })
     }
   }
 
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 </style>

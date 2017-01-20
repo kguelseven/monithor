@@ -31,7 +31,7 @@ public class JobController {
     if (query != null && !query.trim().isEmpty()) {
       return repo.findByTagOrName(query);
     } else {
-      return repo.findAllByOrderByLastTimestampDesc();
+      return repo.findAllByOrderByName();
     }
   }
 
@@ -42,12 +42,12 @@ public class JobController {
 
   @RequestMapping(value = "/tag/{tag}", method = RequestMethod.GET)
   public List<Job> jobsByTag(@PathVariable("tag") String tag) {
-    return repo.findByTagOrderByLastTimestampDesc(tag.toUpperCase());
+    return repo.findByTag(tag.toUpperCase());
   }
 
   @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
   public List<Job> jobsByName(@PathVariable("name") String name) {
-    return repo.findAllByNameIgnoreCaseContainingOrderByLastTimestampDesc(name);
+    return repo.findAllByNameIgnoreCaseContainingOrderByName(name);
   }
 
   @RequestMapping(value = "/", method = RequestMethod.POST)

@@ -1,6 +1,5 @@
 package org.korhan.monithor;
 
-import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,15 +48,15 @@ public class TagControllerIT {
   public void testGetStatusSuccess() {
     TagResult statusTag2 = restUtils.getTagStatus("TAG2");
     assertThat(statusTag2.isSuccess()).isTrue();
-    Assertions.assertThat(statusTag2.getJobsFailure()).isEmpty();
-    Assertions.assertThat(statusTag2.getJobsSuccess()).isEqualTo(Arrays.asList(job1, job3));
+    assertThat(statusTag2.getJobs()).isEqualTo(Arrays.asList(job1, job3));
   }
 
   @Test
   public void testGetStatusFailure() {
     TagResult statusTag1 = restUtils.getTagStatus("TAG1");
     assertThat(statusTag1.isSuccess()).isFalse();
-    Assertions.assertThat(statusTag1.getJobsFailure()).isEqualTo(Arrays.asList(job2));
-    Assertions.assertThat(statusTag1.getJobsSuccess()).isEqualTo(Arrays.asList(job1));
+    assertThat(statusTag1.getJobs()).isEqualTo(Arrays.asList(job1, job2));
+    assertThat(statusTag1.getJobs().get(0).getLastResult()).isTrue();
+    assertThat(statusTag1.getJobs().get(1).getLastResult()).isFalse();
   }
 }

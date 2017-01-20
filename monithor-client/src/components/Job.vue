@@ -4,8 +4,8 @@
       <div class="form-group">
         <label class="control-label col-sm-2"></label>
         <div class="col-sm-10">
-          <h1 v-if="this.$route.params.id">Edit Job</h1>
-          <h1 v-if="!this.$route.params.id">Add Job</h1>
+          <h1 v-if="this.job.id">Edit Job</h1>
+          <h1 v-if="!this.job.id">Add Job</h1>
         </div>
       </div>
       <div class="form-group">
@@ -36,6 +36,16 @@
                  placeholder="sbb access" v-model="job.successMatch" v-validate data-vv-rules="required">
         </div>
       </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" v-model="job.checkDeployment" id="formJobCheckSnapshot"
+                     name="jobCheckDeployment">Check SNAPSHOT Deployment (nightly)
+            </label>
+          </div>
+        </div>
+      </div>
       <hr>
       <div class="form-group">
         <label class="control-label col-sm-2"></label>
@@ -57,20 +67,21 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="control-label col-sm-2" for="formJobBuildTimestampMatch">Overwrite Build Timestamp</label>
+        <label class="control-label col-sm-2" for="formJobBuildTimestampMatch">Overwrite Build
+          Timestamp</label>
         <div class="form-inline col-sm-10">
-          <input class="form-control" style="width: 100%" id="formJobBuildTimestampMatch" name="jobBuildTimestampMatch"
+          <input class="form-control" style="width: 100%" id="formJobBuildTimestampMatch"
+                 name="jobBuildTimestampMatch"
                  placeholder=".*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*" v-model="job.buildTimestampMatch">
         </div>
       </div>
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button class="btn btn-primary" @click.prevent="cancelJob()">
-            <span v-if="this.$route.params.id">Go Back</span>
-            <span v-else>Reset</span>
+          <button v-if="this.$route.params.id" class="btn btn-primary" @click.prevent="cancelJob()">
+            Go Back
           </button>
           <button class="btn btn-primary" :disabled="formFields.failed()" @click.prevent="saveJob()">
-            <span v-if="this.$route.params.id">Update</span>
+            <span v-if="this.job.id">Update</span>
             <span v-else>Add</span>
           </button>
         </div>
@@ -139,6 +150,7 @@
           }
           this.$http.post('/jobs/', this.job).then((response) => {
             this.bus.$emit('message', 'Job saved')
+            this.loadJob(response.body.id)
           }, (response) => {
             this.bus.$emit('error', response.statusText, response.status)
           })
