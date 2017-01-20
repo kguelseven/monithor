@@ -4,13 +4,14 @@ import lombok.extern.log4j.Log4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.model.JobResult;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 @Log4j
@@ -28,34 +29,48 @@ public class HttpChecker implements Checker {
   @Override
   public JobResult check(Job job) {
     long startMs = System.currentTimeMillis();
-    JobResult.JobResultBuilder builder = JobResult.builder().job(job);
+    String version = null, buildTimestamp = null, error = null;
     try {
       HttpResponse response = httpCall(job);
       String text = readText(response);
-      builder.success(match(job.getSuccessMatch(), text))
-        .version(extractor.extractVersion(job.getVersionMatch(), text))
-        .buildTimestamp(extractor.extractBuildTimestamp(job.getBuildTimestampMatch(), text));
+      version = extractor.extractVersion(job.getVersionMatch(), text);
+      buildTimestamp = extractor.extractBuildTimestamp(job.getBuildTimestampMatch(), text);
+      if (!containsSuccessMatch(job.getSuccessMatch(), text)) {
+        error = "success match failed";
+      } else if (job.isCheckDeployment()) {
+        if (!hasExpectedDeployment(version, buildTimestamp)) {
+          error = "deployment version check failed";
+        }
+      }
     } catch (Exception ex) {
       log.error("Error running check", ex);
-      builder.success(false).error(getError(ex));
+      error = getError(ex);
     }
-    return builder.duration(System.currentTimeMillis() - startMs).build();
+    return JobResult.builder()
+      .job(job)
+      .buildTimestamp(buildTimestamp)
+      .version(version)
+      .success(error == null)
+      .error(error)
+      .duration(System.currentTimeMillis() - startMs).build();
   }
 
-  private boolean match(String successMatch, String text) {
-    return Pattern.matches(".*" + successMatch + ".*", text);
+  private boolean containsSuccessMatch(String successMatch, String text) {
+    boolean matches = Pattern.matches(".*" + successMatch + ".*", text);
+    return matches;
+  }
+
+  private boolean hasExpectedDeployment(String version, String buildTimestamp) {
+    if (buildTimestamp != null && version != null && version.contains("SNAPSHOT")) {
+      LocalDate buildDate = LocalDate.parse(buildTimestamp, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+      return LocalDate.now().isEqual(buildDate);
+    }
+    return false;
   }
 
   private String readText(HttpResponse response) throws IOException {
-    StringBuilder builder = new StringBuilder();
-    try (BufferedReader reader = new BufferedReader(
-      new InputStreamReader(response.getEntity().getContent()))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        builder.append(line);
-      }
-    }
-    return builder.toString();
+    String text = EntityUtils.toString(response.getEntity(), "UTF-8");
+    return text.replaceAll("\\r\\n|\\r|\\n", " ");
   }
 
   private HttpResponse httpCall(Job job) throws IOException {

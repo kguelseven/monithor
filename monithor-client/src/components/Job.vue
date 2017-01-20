@@ -36,6 +36,16 @@
                  placeholder="sbb access" v-model="job.successMatch" v-validate data-vv-rules="required">
         </div>
       </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" v-model="job.checkDeployment" id="formJobCheckSnapshot"
+                     name="jobCheckDeployment">Check SNAPSHOT Deployment (nightly)
+            </label>
+          </div>
+        </div>
+      </div>
       <hr>
       <div class="form-group">
         <label class="control-label col-sm-2"></label>
@@ -57,15 +67,17 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="control-label col-sm-2" for="formJobBuildTimestampMatch">Overwrite Build Timestamp</label>
+        <label class="control-label col-sm-2" for="formJobBuildTimestampMatch">Overwrite Build
+          Timestamp</label>
         <div class="form-inline col-sm-10">
-          <input class="form-control" style="width: 100%" id="formJobBuildTimestampMatch" name="jobBuildTimestampMatch"
+          <input class="form-control" style="width: 100%" id="formJobBuildTimestampMatch"
+                 name="jobBuildTimestampMatch"
                  placeholder=".*?(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*" v-model="job.buildTimestampMatch">
         </div>
       </div>
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button v-if="this.$route.params.id" class="btn btn-primary" @click.prevent="cancelJob()" >
+          <button v-if="this.$route.params.id" class="btn btn-primary" @click.prevent="cancelJob()">
             Go Back
           </button>
           <button class="btn btn-primary" :disabled="formFields.failed()" @click.prevent="saveJob()">
