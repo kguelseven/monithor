@@ -1,6 +1,7 @@
 <template>
   <nav class="navbar-inverse navbar-fixed-top">
     <div>
+      <span class="navbar-right logo"><a href="http://github.com/kguelseven/monithor"><img src="static/logo.png" alt="github" title="Monithor @github"></a></span>
       <form class="navbar-form navbar-left">
         <div class="form-group">
           <button type="button" class="btn btn-default btn-ml" @click="monitor()" title="Monitor"><span
@@ -65,7 +66,6 @@
       })
     }
   }
-
 </script>
 <style scoped>
 span.label {
@@ -80,5 +80,9 @@ span.label {
 }
 .navbar-inverse {
   background-color: #424949;
+}
+.logo {
+  margin: 0px;
+  padding: 5px;
 }
 </style>
