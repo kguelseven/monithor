@@ -1,4 +1,4 @@
-package org.korhan.monithor.jobrunner;
+package org.korhan.monithor.check;
 
 import org.springframework.stereotype.Component;
 
@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 @Component
 public class DataExtractor {
+
   private final static Pattern VERSION_PATTERN = Pattern.compile(".*?(\\d+\\.\\d+\\.\\d+(-SNAPSHOT)?).*");
   private final static Pattern BUILD_TIMESTAMP_PATTERN = Pattern.compile(".*?(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}).*");
 

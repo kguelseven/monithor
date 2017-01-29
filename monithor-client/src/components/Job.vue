@@ -84,6 +84,9 @@
             <span v-if="this.job.id">Update</span>
             <span v-else>Add</span>
           </button>
+          <button class="btn btn-primary" @click.prevent="checkJob()">
+            <span>Check</span>
+          </button>
         </div>
       </div>
     </form>
@@ -97,9 +100,8 @@
     <div class="form-group">
       <label class="control-label col-sm-2"></label>
       <div class="col-sm-10"></div>
-      <pre>{{jobPrettyPrinted}}</pre>
+      <pre :class="[{success: job.lastResult}, {failure: !job.lastResult}]">{{jobPrettyPrinted}}</pre>
     </div>
-
   </div>
 </template>
 
@@ -143,6 +145,20 @@
         this.tags = ''
         this.message = ''
       },
+      checkJob () {
+        if (this.$validator.validateAll()) {
+          this.$http.post('/check/', this.job).then((response) => {
+            this.bus.$emit('message', 'Job checked')
+            if (response.body.id) {
+              this.loadJob(response.body.id)
+            } else {
+              this.setJob(response.body)
+            }
+          }, (response) => {
+            this.bus.$emit('error', response.statusText, response.status)
+          })
+        }
+      },
       saveJob () {
         if (this.$validator.validateAll()) {
           if (this.tags) {
@@ -158,14 +174,17 @@
       },
       loadJob (id) {
         this.$http.get('/jobs/' + id).then((response) => {
-          this.job = response.body
-          this.jobPrettyPrinted = JSON.stringify(this.job, null, 2)
-          if (this.job.tags) {
-            this.tags = this.job.tags.join(',')
-          }
+          this.setJob(response.body)
         }, (response) => {
           this.bus.$emit('error', response.statusText, response.status)
         })
+      },
+      setJob (job) {
+        this.job = job
+        this.jobPrettyPrinted = JSON.stringify(this.job, null, 2)
+        if (this.job.tags) {
+          this.tags = this.job.tags.join(',')
+        }
       },
       cancelJob () {
         if (this.$route.params.id) {
@@ -178,4 +197,14 @@
   }
 </script>
 <style scoped>
+  pre {
+    color: white;
+    font-size: 14px;
+  }
+  .success {
+    background-color: #5cb85c;
+  }
+  .failure {
+    background-color: #d9534f;
+  }
 </style>
