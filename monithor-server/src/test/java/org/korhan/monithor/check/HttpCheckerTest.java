@@ -1,4 +1,4 @@
-package org.korhan.monithor.jobrunner;
+package org.korhan.monithor.check;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -7,6 +7,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.korhan.monithor.check.DataExtractor;
+import org.korhan.monithor.check.HttpChecker;
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.model.JobResult;
 import org.mockito.Mock;

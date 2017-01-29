@@ -36,7 +36,7 @@ public class Job {
   private String buildTimestampMatch;
   private boolean checkDeployment;
   @NotNull
-  private Integer intervalSecs;
+  private Integer intervalSecs = 300;
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "TAGS", joinColumns = @JoinColumn(name = "job_id"))
   @Column(name = "tag")
@@ -53,5 +53,14 @@ public class Job {
       return true;
     }
     return (System.currentTimeMillis() - lastTimestamp) > (1000 * intervalSecs);
+  }
+
+  public void populateFromResult(JobResult result) {
+    setLastResult(result.isSuccess());
+    setLastTimestamp(System.currentTimeMillis());
+    setLastMessage(result.getError());
+    setLastDuration(result.getDuration());
+    setLastVersion(result.getVersion());
+    setLastBuildTimestamp(result.getBuildTimestamp());
   }
 }

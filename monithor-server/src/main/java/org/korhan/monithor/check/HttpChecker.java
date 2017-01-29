@@ -1,4 +1,4 @@
-package org.korhan.monithor.jobrunner;
+package org.korhan.monithor.check;
 
 import lombok.extern.log4j.Log4j;
 import org.apache.http.HttpResponse;

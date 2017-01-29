@@ -1,6 +1,9 @@
 package org.korhan.monithor.service;
 
-import lombok.extern.log4j.Log4j;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.model.TagResult;
 import org.korhan.monithor.data.persistence.JobRepository;
@@ -9,11 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-
-@Log4j
 @RestController
 @RequestMapping(value = "tags")
 public class TagController {

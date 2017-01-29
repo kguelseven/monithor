@@ -15,13 +15,9 @@ import java.util.List;
 
 public class IntegrationTestUtils {
 
-  private final String jobsUrl;
-  private final String tagsUrl;
-
-  IntegrationTestUtils() {
-    this.jobsUrl = "http://localhost:8888/jobs/";
-    this.tagsUrl = "http://localhost:8888/tags/";
-  }
+  final static String JOBS_URL = "http://localhost:8888/jobs/";
+  final static String TAGS_URL = "http://localhost:8888/tags/";
+  final static String CHECK_URL = "http://localhost:8888/check/";
 
   @Autowired
   private TestRestTemplate restTemplate;
@@ -34,7 +30,7 @@ public class IntegrationTestUtils {
     job.setLastResult(result);
     job.setName(name);
     job.getTags().addAll(Arrays.asList(tags));
-    return restTemplate.postForObject(jobsUrl, job, Job.class);
+    return restTemplate.postForObject(JOBS_URL, job, Job.class);
   }
 
   List<Job> createJobs(String... names) {
@@ -46,7 +42,7 @@ public class IntegrationTestUtils {
   }
 
   List<Job> queryTagOrName(String queryString) {
-    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(jobsUrl)
+    UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(JOBS_URL)
       .queryParam("queryString", queryString);
     URI uri = builder.build().encode().toUri();
     return restTemplate.exchange(uri, HttpMethod.GET, null,
@@ -55,36 +51,40 @@ public class IntegrationTestUtils {
   }
 
   List<Job> getByTag(String tag) {
-    return restTemplate.exchange(jobsUrl + "tag/{tag}", HttpMethod.GET, null,
+    return restTemplate.exchange(JOBS_URL + "tag/{tag}", HttpMethod.GET, null,
       new ParameterizedTypeReference<List<Job>>() {
       }, tag).getBody();
   }
 
   List<Job> getByName(String name) {
-    return restTemplate.exchange(jobsUrl + "name/{name}", HttpMethod.GET, null,
+    return restTemplate.exchange(JOBS_URL + "name/{name}", HttpMethod.GET, null,
       new ParameterizedTypeReference<List<Job>>() {
       }, name).getBody();
   }
 
   List<String> getTags() {
-    return restTemplate.exchange(tagsUrl, HttpMethod.GET, null,
+    return restTemplate.exchange(TAGS_URL, HttpMethod.GET, null,
       new ParameterizedTypeReference<List<String>>() {
       }).getBody();
   }
 
   TagResult getTagStatus(String tag) {
-    return restTemplate.getForObject(tagsUrl + "status/{tag}", TagResult.class, tag);
+    return restTemplate.getForObject(TAGS_URL + "status/{tag}", TagResult.class, tag);
+  }
+
+  Job check(Job job) {
+    return restTemplate.postForObject(CHECK_URL, job, Job.class);
   }
 
   void delete(Job job) {
-    restTemplate.delete(jobsUrl + "{id}", job.getId());
+    restTemplate.delete(JOBS_URL + "{id}", job.getId());
   }
 
   void update(Job job) {
-    restTemplate.put(jobsUrl + "{id}", job, job.getId());
+    restTemplate.put(JOBS_URL + "{id}", job, job.getId());
   }
 
   Job load(Long id) {
-    return restTemplate.getForObject(jobsUrl + "{id}", Job.class, id);
+    return restTemplate.getForObject(JOBS_URL + "{id}", Job.class, id);
   }
 }

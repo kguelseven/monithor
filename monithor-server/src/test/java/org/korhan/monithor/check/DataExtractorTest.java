@@ -1,8 +1,9 @@
-package org.korhan.monithor.jobrunner;
+package org.korhan.monithor.check;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.korhan.monithor.check.DataExtractor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;

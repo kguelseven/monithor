@@ -1,4 +1,4 @@
-package org.korhan.monithor.jobrunner;
+package org.korhan.monithor.check;
 
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.model.JobResult;

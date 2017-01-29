@@ -1,6 +1,10 @@
 package org.korhan.monithor.service;
 
-import lombok.extern.log4j.Log4j;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.persistence.JobRepository;
 import org.springframework.validation.BindingResult;
@@ -11,11 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
-
-@Log4j
 @RestController
 @RequestMapping(value = "jobs")
 public class JobController {
@@ -52,14 +51,12 @@ public class JobController {
 
   @RequestMapping(value = "/", method = RequestMethod.POST)
   public Job save(@RequestBody @Valid Job job, BindingResult bindingResult) {
-    uppercaseAllTags(job);
-    return repo.save(job);
+    return repo.save(uppercaseAllTags(job));
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public Job update(@RequestBody @Valid Job job, @PathVariable("id") Long id, BindingResult bindingResult) {
-    uppercaseAllTags(job);
-    return repo.save(job);
+    return repo.save(uppercaseAllTags(job));
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -67,10 +64,10 @@ public class JobController {
     repo.delete(id);
   }
 
-  private void uppercaseAllTags(Job job) {
+  private Job uppercaseAllTags(Job job) {
     job.setTags(job.getTags().stream()
       .map(String::toUpperCase)
       .collect(Collectors.toSet()));
+    return job;
   }
 }
-

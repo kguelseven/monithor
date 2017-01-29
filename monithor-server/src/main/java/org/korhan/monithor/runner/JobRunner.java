@@ -1,7 +1,8 @@
-package org.korhan.monithor.jobrunner;
+package org.korhan.monithor.runner;
 
 
 import lombok.extern.log4j.Log4j;
+import org.korhan.monithor.check.Checker;
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.model.JobResult;
 import org.korhan.monithor.data.persistence.JobRepository;
@@ -33,7 +34,7 @@ public class JobRunner {
     this.completionService = new ExecutorCompletionService<>(executor);
   }
 
-  @Scheduled(fixedDelayString = "${jobrunner.delay}")
+  @Scheduled(fixedDelayString = "${runner.delay}")
   public void run() throws Exception {
     long startMillis = System.currentTimeMillis();
     List<Job> jobs = loadDueJobs();
@@ -103,9 +104,7 @@ public class JobRunner {
     if (!jobs.isEmpty()) {
       log.debug("Total jobs loaded " + jobs.size());
     }
-
   }
-
 
   class JobTask implements Callable<Job> {
 
@@ -120,12 +119,7 @@ public class JobRunner {
     @Override
     public Job call() throws Exception {
       JobResult result = checker.check(job);
-      job.setLastResult(result.isSuccess());
-      job.setLastTimestamp(System.currentTimeMillis());
-      job.setLastMessage(result.getError());
-      job.setLastDuration(result.getDuration());
-      job.setLastVersion(result.getVersion());
-      job.setLastBuildTimestamp(result.getBuildTimestamp());
+      job.populateFromResult(result);
       return job;
     }
   }

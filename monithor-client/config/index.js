@@ -27,6 +27,9 @@ module.exports = {
       },
       '/tags': {
         target: 'http://localhost:8090'
+      },
+      '/check': {
+        target: 'http://localhost:8090'
       }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
