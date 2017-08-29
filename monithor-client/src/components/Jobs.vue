@@ -64,6 +64,7 @@
         columns: [
           {name: 'lastResult', title: 'Status', callback: 'status'},
           'name',
+          'disabled',
           {name: 'url', title: 'URL', callback: 'url'},
           {name: 'tags', title: 'Tags', callback: 'tags'},
           {name: 'intervalSecs', title: 'Interval secs'},

@@ -31,9 +31,12 @@
       </div>
       <div class="form-group">
         <label class="control-label col-sm-2" for="formJobMatch">Match</label>
-        <div class="form-inline col-sm-10" :class="{ 'has-error': errors.has('jobMatch')}">
+        <div class="form-inline col-sm-8" :class="{ 'has-error': errors.has('jobMatch')}">
           <input class="form-control" style="width: 100%" id="formJobMatch" name="jobMatch"
-                 placeholder="sbb access" v-model="job.successMatch" v-validate data-vv-rules="required">
+                 placeholder="sbb access" v-model="job.match" v-validate data-vv-rules="required">
+        </div>
+        <div class="checkbox">
+          <label><input type="checkbox" name="matchFailure" v-model="job.matchFailure">Match failure</label>
         </div>
       </div>
       <div class="form-group">
@@ -42,6 +45,16 @@
             <label>
               <input type="checkbox" v-model="job.checkDeployment" id="formJobCheckSnapshot"
                      name="jobCheckDeployment">Check SNAPSHOT Deployment (nightly)
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" v-model="job.disabled" id="formJobCheckDisables"
+                     name="jobDisabled">Disabled (will not be checked, will not be shown)
             </label>
           </div>
         </div>
@@ -80,7 +93,7 @@
           <button v-if="this.$route.params.id" class="btn btn-primary" @click.prevent="cancelJob()">
             Go Back
           </button>
-          <button class="btn btn-primary" :disabled="formFields.failed()" @click.prevent="saveJob()">
+          <button class="btn btn-primary" :disabled="errors.any()" @click.prevent="saveJob()">
             <span v-if="this.job.id">Update</span>
             <span v-else>Add</span>
           </button>

@@ -22,15 +22,27 @@ public class IntegrationTestUtils {
   @Autowired
   private TestRestTemplate restTemplate;
 
+  Job createDisabledJobWithTags(String name, boolean result, String... tags) {
+    Job job = newJob(name, result, tags);
+    job.setDisabled(true);
+    return restTemplate.postForObject(JOBS_URL, job, Job.class);
+  }
+
+
   Job createJobWithTags(String name, boolean result, String... tags) {
+    Job job = newJob(name, result, tags);
+    return restTemplate.postForObject(JOBS_URL, job, Job.class);
+  }
+
+  Job newJob(String name, boolean result, String... tags) {
     Job job = new Job();
     job.setIntervalSecs(1);
     job.setUrl("http://korhan.org");
-    job.setSuccessMatch("testsuccess");
+    job.setMatch("testsuccess");
     job.setLastResult(result);
     job.setName(name);
     job.getTags().addAll(Arrays.asList(tags));
-    return restTemplate.postForObject(JOBS_URL, job, Job.class);
+    return job;
   }
 
   List<Job> createJobs(String... names) {
@@ -43,29 +55,29 @@ public class IntegrationTestUtils {
 
   List<Job> queryTagOrName(String queryString) {
     UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(JOBS_URL)
-      .queryParam("queryString", queryString);
+                                                       .queryParam("queryString", queryString);
     URI uri = builder.build().encode().toUri();
     return restTemplate.exchange(uri, HttpMethod.GET, null,
-      new ParameterizedTypeReference<List<Job>>() {
-      }).getBody();
+        new ParameterizedTypeReference<List<Job>>() {
+        }).getBody();
   }
 
   List<Job> getByTag(String tag) {
     return restTemplate.exchange(JOBS_URL + "tag/{tag}", HttpMethod.GET, null,
-      new ParameterizedTypeReference<List<Job>>() {
-      }, tag).getBody();
+        new ParameterizedTypeReference<List<Job>>() {
+        }, tag).getBody();
   }
 
   List<Job> getByName(String name) {
     return restTemplate.exchange(JOBS_URL + "name/{name}", HttpMethod.GET, null,
-      new ParameterizedTypeReference<List<Job>>() {
-      }, name).getBody();
+        new ParameterizedTypeReference<List<Job>>() {
+        }, name).getBody();
   }
 
   List<String> getTags() {
     return restTemplate.exchange(TAGS_URL, HttpMethod.GET, null,
-      new ParameterizedTypeReference<List<String>>() {
-      }).getBody();
+        new ParameterizedTypeReference<List<String>>() {
+        }).getBody();
   }
 
   TagResult getTagStatus(String tag) {

@@ -3,6 +3,7 @@ package org.korhan.monithor.service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.model.TagResult;
@@ -29,18 +30,22 @@ public class TagController {
 
   @RequestMapping(value = "/status/{tag}", method = RequestMethod.GET)
   public TagResult getStatus(@PathVariable("tag") String tag) {
-    List<Job> jobs = repo.findByTag(tag);
+    List<Job> jobs = repo.findByTag(tag)
+                         .stream()
+                         .filter(j -> !j.isDisabled())
+                         .collect(Collectors.toList());
     Optional<Job> lastJob = jobs.stream().max(Comparator.comparing(j -> j.getLastTimestamp()));
     long lastTimestamp = 0l;
-    if(lastJob.isPresent()) {
+    if (lastJob.isPresent()) {
       lastTimestamp = lastJob.get().getLastTimestamp();
     }
-    boolean successStatus = jobs.stream().allMatch(j -> j.getLastResult());
+    boolean successStatus = jobs.stream()
+                                .allMatch(j -> j.getLastResult());
     return TagResult.builder()
-      .jobs(jobs)
-      .lastTimestamp(lastTimestamp)
-      .tag(tag)
-      .success(successStatus)
-      .build();
+                    .jobs(jobs)
+                    .lastTimestamp(lastTimestamp)
+                    .tag(tag)
+                    .success(successStatus)
+                    .build();
   }
 }

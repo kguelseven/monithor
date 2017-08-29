@@ -35,7 +35,7 @@ public class HttpChecker implements Checker {
       String text = readText(response);
       version = extractor.extractVersion(job.getVersionMatch(), text);
       buildTimestamp = extractor.extractBuildTimestamp(job.getBuildTimestampMatch(), text);
-      if (!containsSuccessMatch(job.getSuccessMatch(), text)) {
+      if (!containsMatch(job, text)) {
         error = "success match failed";
       } else if (job.isCheckDeployment()) {
         if (!hasExpectedDeployment(version, buildTimestamp)) {
@@ -47,18 +47,22 @@ public class HttpChecker implements Checker {
       error = getError(ex);
     }
     return JobResult.builder()
-      .job(job)
-      .buildTimestamp(buildTimestamp)
-      .version(version)
-      .success(error == null)
-      .error(error)
-      .duration(System.currentTimeMillis() - startMs).build();
+                    .job(job)
+                    .buildTimestamp(buildTimestamp)
+                    .version(version)
+                    .success(error == null)
+                    .error(error)
+                    .duration(System.currentTimeMillis() - startMs).build();
   }
 
-  private boolean containsSuccessMatch(String successMatch, String text) {
-    boolean matches = Pattern.matches(".*" + successMatch + ".*", text);
+  private boolean containsMatch(Job job, String text) {
+    boolean matches = Pattern.matches(".*" + job.getMatch() + ".*", text);
+    if (job.getMatchFailure() != null && job.getMatchFailure()) {
+      return !matches;
+    }
     return matches;
   }
+
 
   private boolean hasExpectedDeployment(String version, String buildTimestamp) {
     if (buildTimestamp != null && version != null && version.contains("SNAPSHOT")) {
