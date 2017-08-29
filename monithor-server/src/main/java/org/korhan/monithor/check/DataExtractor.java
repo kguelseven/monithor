@@ -8,11 +8,16 @@ import java.util.regex.Pattern;
 @Component
 public class DataExtractor {
 
-  private final static Pattern VERSION_PATTERN = Pattern.compile(".*?(\\d+\\.\\d+\\.\\d+(-SNAPSHOT)?).*");
+  private final static Pattern VERSION_1_PATTERN = Pattern.compile(".*?(\\d+\\.\\d+\\.\\d+(-SNAPSHOT)?).*");
+  private final static Pattern VERSION_2_PATTERN = Pattern.compile(".*?version</strong></td><td>(\\d+(-SNAPSHOT)?)</td>.*");
   private final static Pattern BUILD_TIMESTAMP_PATTERN = Pattern.compile(".*?(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}).*");
 
   public String extractVersion(String patternOverwrite, String text) {
-    return extractVersion(getPattern(VERSION_PATTERN, patternOverwrite), text);
+    String version = extractVersion(getPattern(VERSION_2_PATTERN, patternOverwrite), text);
+    if (version == null) {
+      version = extractVersion(getPattern(VERSION_1_PATTERN, patternOverwrite), text);
+    }
+    return version;
   }
 
   public String extractBuildTimestamp(String patternOverwrite, String text) {

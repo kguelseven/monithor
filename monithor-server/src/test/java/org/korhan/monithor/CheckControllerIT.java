@@ -63,7 +63,7 @@ public class CheckControllerIT {
     Job job = new Job();
     job.setName("Testing with " + successMatch);
     job.setUrl(IntegrationTestUtils.JOBS_URL + job1.getId());
-    job.setSuccessMatch(successMatch);
+    job.setMatch(successMatch);
     return job;
   }
 }

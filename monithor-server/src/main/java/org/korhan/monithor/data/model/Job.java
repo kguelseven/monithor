@@ -31,7 +31,10 @@ public class Job {
   @URL
   private String url;
   @NotNull
-  private String successMatch;
+  private boolean disabled;
+  @NotNull
+  private String match;
+  private Boolean matchFailure = false;
   private String versionMatch;
   private String buildTimestampMatch;
   private boolean checkDeployment;

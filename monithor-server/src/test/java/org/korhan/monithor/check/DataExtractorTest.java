@@ -27,6 +27,17 @@ public class DataExtractorTest {
     assertThat(extractor.extractVersion(null, " 1.0.0 ")).isEqualTo("1.0.0");
     assertThat(extractor.extractVersion(null, "1212asd1<td>1.0.11-SNAPSHOT</td></tr><tr><td> applicationVersion=1701.0.14-SNAPSHOT")).isEqualTo("1.0.11-SNAPSHOT");
     assertThat(extractor.extractVersion(null, "<p> 1701.10.13-SNAPSHOT </p>abc")).isEqualTo("1701.10.13-SNAPSHOT");
+
+    assertThat(extractor.extractVersion(null, "foo<tr><td><strong>version</strong></td><td>2</td></tr><tr><td>")).isEqualTo("2");
+    assertThat(extractor.extractVersion(null, " foo <tr><td><strong>version</strong></td><td>2-SNAPSHOT</td></tr><tr><td>")).isEqualTo("2-SNAPSHOT");
+    assertThat(extractor.extractVersion(null, "foo <tr><td><strong>version</strong></td><td>1.2.3-SNAPSHOT</td></tr><tr><td>")).isEqualTo("1.2.3-SNAPSHOT");
+  }
+
+  @Test
+  public void testExtractVersionFallback() {
+    assertThat(extractor.extractVersion(null, "version</strongX></td><td>1-SNAPSHOT</td></tr><tr><td>")).isNull();
+    assertThat(extractor.extractVersion(null, "foo<td><p>1701.10.13-SNAPSHOT</p>abc")).isEqualTo("1701.10.13-SNAPSHOT");
+    assertThat(extractor.extractVersion(null, "foo<td><p>1701.10.13-SNAPSHOT</p>abc foo<tr><td><strong>version</strong></td><td>1-SNAPSHOT</td></tr><tr><td>")).isEqualTo("1-SNAPSHOT");
   }
 
   @Test

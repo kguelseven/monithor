@@ -7,8 +7,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.korhan.monithor.check.DataExtractor;
-import org.korhan.monithor.check.HttpChecker;
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.model.JobResult;
 import org.mockito.Mock;
@@ -54,10 +52,28 @@ public class HttpCheckerTest {
   }
 
   @Test
+  public void testCheckSimpleStringFailure() {
+    Job foo = newJob("foo");
+    foo.setMatchFailure(true);
+    JobResult result = testee.check(foo);
+    assertThat(result.isSuccess()).isFalse();
+    assertThat(result.getError()).isEqualTo("success match failed");
+  }
+
+  @Test
   public void testCheckRegexString() {
     JobResult result = testee.check(newJob("[a-z]{1}[o-o]{2}"));
     assertThat(result.isSuccess()).isTrue();
     assertThat(result.getError()).isNull();
+  }
+
+  @Test
+  public void testCheckRegexStringFailure() {
+    Job job = newJob("[a-z]{1}[o-o]{2}");
+    job.setMatchFailure(true);
+    JobResult result = testee.check(job);
+    assertThat(result.isSuccess()).isFalse();
+    assertThat(result.getError()).isEqualTo("success match failed");
   }
 
   @Test
@@ -118,7 +134,7 @@ public class HttpCheckerTest {
 
   private Job newJob(String successMatch) {
     Job job = new Job();
-    job.setSuccessMatch(successMatch);
+    job.setMatch(successMatch);
     job.setUrl("testing");
     return job;
   }

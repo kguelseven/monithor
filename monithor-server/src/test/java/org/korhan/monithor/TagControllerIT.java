@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = IntegrationTestConfig.class)
 public class TagControllerIT {
 
-  private Job job1, job2, job3;
+  private Job job1, job2, job3, job4;
 
   @Autowired
   private IntegrationTestUtils restUtils;
@@ -32,6 +32,7 @@ public class TagControllerIT {
     job1 = restUtils.createJobWithTags("foo1", true, new String[]{"tag1", "tag2", "tag3"});
     job2 = restUtils.createJobWithTags("foo2", false, new String[]{"tag1", "tag20"});
     job3 = restUtils.createJobWithTags("foo3", true, new String[]{"tag40", "tag2"});
+    job4 = restUtils.createDisabledJobWithTags("foo4", false, new String[]{"tag40", "tag2"});
   }
 
   @After
