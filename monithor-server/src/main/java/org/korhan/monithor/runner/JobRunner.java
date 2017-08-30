@@ -60,9 +60,9 @@ public class JobRunner {
 
   private List<Job> loadDueJobs() {
     List<Job> jobs = repo.findAll()
-      .stream()
-      .filter(j -> j.isDue())
-      .collect(Collectors.toList());
+                         .stream()
+                         .filter(j -> j.isDue() && !j.isDisabled())
+                         .collect(Collectors.toList());
     return jobs;
   }
 
