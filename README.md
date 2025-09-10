@@ -37,3 +37,5 @@ and run the executable jar with
 ```
 java -jar monithor-server/target/monithor-server-1.0-SNAPSHOT.jar
 ```
+
+modified by claude code

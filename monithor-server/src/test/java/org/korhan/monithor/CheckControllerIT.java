@@ -2,17 +2,17 @@ package org.korhan.monithor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.persistence.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-@RunWith(SpringRunner.class)
+@SpringJUnitConfig
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = IntegrationTestConfig.class)
 public class CheckControllerIT {
 
@@ -24,12 +24,12 @@ public class CheckControllerIT {
   @Autowired
   private JobRepository repo;
 
-  @Before
+  @BeforeEach
   public void setup() {
     job1 = restUtils.createJobWithTags("dog fooding", true, new String[]{"tag1", "tag2", "tag3"});
   }
 
-  @After
+  @AfterEach
   public void tearDown() {
     repo.deleteAll();
   }
@@ -54,7 +54,7 @@ public class CheckControllerIT {
     job.setLastResult(false);
     Job jobSaved = repo.save(job);
     Job jobChecked = restUtils.check(jobSaved);
-    jobSaved = repo.findOne(jobSaved.getId());
+    jobSaved = repo.findById(jobSaved.getId()).orElse(null);
     assertThat(jobSaved.getLastResult()).isTrue();
     assertThat(jobSaved).isEqualTo(jobChecked);
   }
