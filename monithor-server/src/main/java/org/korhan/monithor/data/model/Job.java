@@ -2,8 +2,6 @@ package org.korhan.monithor.data.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import org.hibernate.validator.constraints.URL;
-
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -14,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.URL;
 import java.util.HashSet;
 import java.util.Set;
 
