@@ -1,20 +1,20 @@
 package org.korhan.monithor;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.persistence.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+@SpringJUnitConfig
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = IntegrationTestConfig.class)
 public class JobControllerQueryIT {
 
@@ -26,14 +26,14 @@ public class JobControllerQueryIT {
   @Autowired
   private JobRepository repo;
 
-  @Before
+  @BeforeEach
   public void setup() {
     job1 = restUtils.createJobWithTags("foo1", true, new String[]{"tag1", "tag2", "tag3"});
     job2 = restUtils.createJobWithTags("foo2", true, new String[]{"tag1", "tag20"});
     job3 = restUtils.createJobWithTags("foo3", true, new String[]{"tag40", "foo1"});
   }
 
-  @After
+  @AfterEach
   public void tearDown() {
     repo.deleteAll();
   }

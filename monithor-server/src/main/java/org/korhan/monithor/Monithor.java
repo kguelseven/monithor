@@ -1,6 +1,6 @@
 package org.korhan.monithor;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClients;
@@ -12,14 +12,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.concurrent.Executor;
 
 @SpringBootApplication
 @EnableScheduling
 @EnableAsync
-@Log4j
+@Slf4j
 public class Monithor {
 
   public static final int CONNECTION_TIMEOUT = 30000;
@@ -30,7 +29,7 @@ public class Monithor {
 
   @Bean
   public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurerAdapter() {
+    return new WebMvcConfigurer() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").allowedMethods("GET", "POST", "OPTIONS", "DELETE");

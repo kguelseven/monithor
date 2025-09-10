@@ -1,7 +1,7 @@
 package org.korhan.monithor.runner;
 
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.korhan.monithor.check.Checker;
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.model.JobResult;
@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-@Log4j
+@Slf4j
 @Component
 public class JobRunner {
 

@@ -4,13 +4,13 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.model.JobResult;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -19,10 +19,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.lenient;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class HttpCheckerTest {
 
   private HttpChecker testee;
@@ -36,12 +37,12 @@ public class HttpCheckerTest {
   private HttpResponse httpResponse;
 
 
-  @Before
+  @BeforeEach
   public void setup() throws IOException {
     this.testee = new HttpChecker(client, extractor);
-    when(httpResponse.getEntity()).thenReturn(httpEntity);
-    when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("YfooU 12 x13 ver = 1.20<br> a".getBytes(StandardCharsets.UTF_8)));
-    when(client.execute(any(HttpGet.class))).thenReturn(httpResponse);
+    lenient().when(httpResponse.getEntity()).thenReturn(httpEntity);
+    lenient().when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("YfooU 12 x13 ver = 1.20<br> a".getBytes(StandardCharsets.UTF_8)));
+    lenient().when(client.execute(any(HttpGet.class))).thenReturn(httpResponse);
   }
 
   @Test
