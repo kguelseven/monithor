@@ -3,7 +3,7 @@ package org.korhan.monithor.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.persistence.JobRepository;
