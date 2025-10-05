@@ -1,6 +1,6 @@
 package org.korhan.monithor.service;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.korhan.monithor.check.Checker;
 import org.korhan.monithor.data.model.Job;
