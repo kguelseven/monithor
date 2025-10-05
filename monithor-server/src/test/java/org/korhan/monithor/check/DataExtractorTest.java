@@ -1,21 +1,21 @@
 package org.korhan.monithor.check;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.korhan.monithor.check.DataExtractor;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DataExtractorTest {
 
   private DataExtractor extractor;
 
-  @Before
+  @BeforeEach
   public void setup() throws IOException {
     extractor = new DataExtractor();
   }

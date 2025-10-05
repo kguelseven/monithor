@@ -1,10 +1,9 @@
 package org.korhan.monithor.check;
 
-import lombok.extern.log4j.Log4j;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.model.JobResult;
 import org.springframework.stereotype.Component;
@@ -14,7 +13,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
-@Log4j
+@Slf4j
 @Component
 public class HttpChecker implements Checker {
 
@@ -31,8 +30,7 @@ public class HttpChecker implements Checker {
     long startMs = System.currentTimeMillis();
     String version = null, buildTimestamp = null, error = null;
     try {
-      HttpResponse response = httpCall(job);
-      String text = readText(response);
+      String text = httpCall(job);
       version = extractor.extractVersion(job.getVersionMatch(), text);
       buildTimestamp = extractor.extractBuildTimestamp(job.getBuildTimestampMatch(), text);
       if (!containsMatch(job, text)) {
@@ -72,13 +70,11 @@ public class HttpChecker implements Checker {
     return false;
   }
 
-  private String readText(HttpResponse response) throws IOException {
-    String text = EntityUtils.toString(response.getEntity(), "UTF-8");
-    return text.replaceAll("\\r\\n|\\r|\\n", " ");
-  }
-
-  private HttpResponse httpCall(Job job) throws IOException {
-    return client.execute(new HttpGet(job.getUrl()));
+  private String httpCall(Job job) throws IOException {
+    return client.execute(new HttpGet(job.getUrl()), response -> {
+      String text = EntityUtils.toString(response.getEntity(), "UTF-8");
+      return text.replaceAll("\\r\\n|\\r|\\n", " ");
+    });
   }
 
   private String getError(Exception ex) {
