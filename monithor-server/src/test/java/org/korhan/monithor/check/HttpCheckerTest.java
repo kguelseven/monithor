@@ -1,28 +1,28 @@
 package org.korhan.monithor.check;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.korhan.monithor.data.model.Job;
 import org.korhan.monithor.data.model.JobResult;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class HttpCheckerTest {
 
   private HttpChecker testee;
@@ -30,18 +30,16 @@ public class HttpCheckerTest {
 
   @Mock
   private HttpClient client;
-  @Mock
-  private HttpEntity httpEntity;
-  @Mock
-  private HttpResponse httpResponse;
 
 
-  @Before
+  @BeforeEach
   public void setup() throws IOException {
     this.testee = new HttpChecker(client, extractor);
-    when(httpResponse.getEntity()).thenReturn(httpEntity);
-    when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("YfooU 12 x13 ver = 1.20<br> a".getBytes(StandardCharsets.UTF_8)));
-    when(client.execute(any(HttpGet.class))).thenReturn(httpResponse);
+    when(client.execute(any(HttpGet.class), any(HttpClientResponseHandler.class)))
+      .thenAnswer(invocation -> {
+        HttpClientResponseHandler<String> handler = invocation.getArgument(1);
+        return "YfooU 12 x13 ver = 1.20<br> a";
+      });
   }
 
   @Test
@@ -85,7 +83,7 @@ public class HttpCheckerTest {
 
   @Test
   public void testCheckIOException() throws IOException {
-    when(client.execute(any(HttpGet.class))).thenThrow(new IOException("boom"));
+    when(client.execute(any(HttpGet.class), any(HttpClientResponseHandler.class))).thenThrow(new IOException("boom"));
     JobResult result = testee.check(newJob("foo"));
     assertThat(result.isSuccess()).isFalse();
     assertThat(result.getError()).contains("boom");
@@ -94,7 +92,8 @@ public class HttpCheckerTest {
   @Test
   public void testCheckDeploymentWrong() throws IOException {
     String now = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
-    when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(("1701.0.13-SNAPSHOT " + now + " foo").getBytes(StandardCharsets.UTF_8)));
+    when(client.execute(any(HttpGet.class), any(HttpClientResponseHandler.class)))
+      .thenAnswer(invocation -> "1701.0.13-SNAPSHOT " + now + " foo");
     JobResult result = testee.check(newJobCheckDeployment("foo"));
     assertThat(result.isSuccess()).isTrue();
     assertThat(result.getBuildTimestamp()).isEqualTo(now);
@@ -104,7 +103,8 @@ public class HttpCheckerTest {
 
   @Test
   public void testCheckDeploymentWrongBuildTimestamp() throws IOException {
-    when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("1701.0.13-SNAPSHOT 2017-01-06 00:37:45 foo".getBytes(StandardCharsets.UTF_8)));
+    when(client.execute(any(HttpGet.class), any(HttpClientResponseHandler.class)))
+      .thenAnswer(invocation -> "1701.0.13-SNAPSHOT 2017-01-06 00:37:45 foo");
     JobResult result = testee.check(newJobCheckDeployment("foo"));
     assertThat(result.isSuccess()).isFalse();
     assertThat(result.getBuildTimestamp()).isEqualTo("2017-01-06 00:37:45");
@@ -114,7 +114,8 @@ public class HttpCheckerTest {
 
   @Test
   public void testCheckDeploymentMissingVersion() throws IOException {
-    when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("2017-01-06 00:37:45 foo".getBytes(StandardCharsets.UTF_8)));
+    when(client.execute(any(HttpGet.class), any(HttpClientResponseHandler.class)))
+      .thenAnswer(invocation -> "2017-01-06 00:37:45 foo");
     JobResult result = testee.check(newJobCheckDeployment("foo"));
     assertThat(result.isSuccess()).isFalse();
     assertThat(result.getVersion()).isNull();
@@ -124,7 +125,8 @@ public class HttpCheckerTest {
 
   @Test
   public void testCheckDeploymentMissingBuildtimestamp() throws IOException {
-    when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream("1701.0.13 foo".getBytes(StandardCharsets.UTF_8)));
+    when(client.execute(any(HttpGet.class), any(HttpClientResponseHandler.class)))
+      .thenAnswer(invocation -> "1701.0.13 foo");
     JobResult result = testee.check(newJobCheckDeployment("foo"));
     assertThat(result.isSuccess()).isFalse();
     assertThat(result.getBuildTimestamp()).isNull();
