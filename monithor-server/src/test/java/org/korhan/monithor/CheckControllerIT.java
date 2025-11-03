@@ -54,7 +54,7 @@ public class CheckControllerIT {
     job.setLastResult(false);
     Job jobSaved = repo.save(job);
     Job jobChecked = restUtils.check(jobSaved);
-    jobSaved = repo.findOne(jobSaved.getId());
+    jobSaved = repo.findById(jobSaved.getId()).orElse(null);
     assertThat(jobSaved.getLastResult()).isTrue();
     assertThat(jobSaved).isEqualTo(jobChecked);
   }

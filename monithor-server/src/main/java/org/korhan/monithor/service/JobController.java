@@ -36,7 +36,7 @@ public class JobController {
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public Job jobById(@PathVariable("id") Long id) {
-    return repo.findOne(id);
+    return repo.findById(id).orElse(null);
   }
 
   @RequestMapping(value = "/tag/{tag}", method = RequestMethod.GET)
@@ -61,7 +61,7 @@ public class JobController {
 
   @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
   public void delete(@PathVariable("id") Long id) {
-    repo.delete(id);
+    repo.deleteById(id);
   }
 
   private Job uppercaseAllTags(Job job) {
