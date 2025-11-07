@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: crypto-trading-bot
+
+trading:
+  # Exchange API Configuration
+  exchange:
+    name: binance
+    api-key: ${EXCHANGE_API_KEY:your-api-key}
+    api-secret: ${EXCHANGE_API_SECRET:your-api-secret}
+    testnet: true  # Use testnet for testing
+    base-url: ${EXCHANGE_BASE_URL:https://testnet.binance.vision}
+    ws-url: ${EXCHANGE_WS_URL:wss://testnet.binance.vision/ws}
+
+  # Trading Configuration
+  strategy:
+    enabled: false  # Set to true to enable live trading
+    symbol: BTCUSDT
+    interval: 1m  # Trading interval: 1m, 5m, 15m, 1h, etc.
+
+  # Moving Average Strategy Parameters
+  moving-average:
+    short-period: 10  # Short-term MA period
+    long-period: 30   # Long-term MA period
+
+  # Risk Management
+  risk:
+    max-trade-amount: 100.0  # Maximum amount per trade in quote currency
+    stop-loss-percentage: 2.0  # Stop loss percentage
+    take-profit-percentage: 5.0  # Take profit percentage
+
+  # Monitoring
+  monitoring:
+    update-interval: 5000  # Market data update interval in milliseconds
+
+logging:
+  level:
+    com.trading.bot: INFO
+    root: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+server:
+  port: 8080
